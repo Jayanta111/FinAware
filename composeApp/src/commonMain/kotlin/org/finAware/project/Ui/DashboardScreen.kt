@@ -9,12 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import org.finAware.project.Ui.BottomNavBar
 
 @Composable
-fun DashboardScreen() {
+fun DashboardScreen(navController: NavHostController) {
     Scaffold(
-        bottomBar = { BottomNavBar() }
+        bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
         val scrollState = rememberScrollState()
 
@@ -172,9 +174,12 @@ fun TipCard(title: String, description: String, actionText: String) {
     showBackground = true,
     showSystemUi = true,
 )
-@Composable
-fun DashboardScreenPreview() {
-    MaterialTheme {
-        DashboardScreen()
+
+            @Composable
+            fun DashboardScreenPreview() {
+                val navController = rememberNavController()
+                MaterialTheme {
+                    DashboardScreen(navController = navController)
+                }
     }
-}
+

@@ -1,29 +1,20 @@
 package org.finAware.project.Ui
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun FraudSimulatorScreen(onNavigate: (String) -> Unit = {}) {
+fun FraudSimulatorScreen(navController: NavHostController) {
     Scaffold(
         bottomBar = {
-            BottomNavBar()
+            BottomNavBar(navController)
         }
     ) { innerPadding ->
         Column(
@@ -50,7 +41,6 @@ fun FraudSimulatorScreen(onNavigate: (String) -> Unit = {}) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Placeholder: list of recent simulations
             repeat(3) {
                 Card(
                     modifier = Modifier
@@ -109,11 +99,11 @@ fun ScenarioSetup() {
     }
 }
 
-
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun FraudSimulatorScreenPreview() {
+    val navController = rememberNavController()
     MaterialTheme {
-        FraudSimulatorScreen()
+        FraudSimulatorScreen(navController)
     }
 }

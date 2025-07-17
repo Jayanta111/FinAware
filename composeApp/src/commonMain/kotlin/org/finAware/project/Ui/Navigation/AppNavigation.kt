@@ -11,6 +11,9 @@ import org.finAware.project.authentication.AuthServiceImpl
 import org.finAware.project.authentication.AuthViewModel
 import org.finAware.project.authentication.SignUpScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.finAware.project.Ui.FraudSimulatorScreen
+import org.finAware.project.Ui.LearningCenterScreen
+import org.finAware.project.Ui.ProfileScreen
 import org.finAware.project.authentication.LoginScreen
 import org.finAware.project.ui.DashboardScreen
 
@@ -20,6 +23,9 @@ sealed class Screen(val route: String) {
     data object Login : Screen("login")
     data object SignUp : Screen("signup")
     data object DashboardScreen : Screen("DashboardScreen") // Main app screen
+    data object Simulator : Screen("simulator")
+    data object Learning : Screen("learning")
+    data object Profile : Screen("ProfileScreen")
 }
 @Composable
 fun AppNavigation(
@@ -89,7 +95,12 @@ fun AppNavigation(
         }
 
         composable(Screen.DashboardScreen.route) {
-            DashboardScreen()
+            DashboardScreen(navController)
         }
+        composable(Screen.Simulator.route) { FraudSimulatorScreen(navController) }
+        composable(Screen.Learning.route) { LearningCenterScreen(navController) }
+        composable(Screen.Profile.route) { ProfileScreen(navController) }
+
+
     }
 }
