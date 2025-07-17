@@ -1,6 +1,5 @@
 package org.finAware.project.Ui
 
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -24,7 +23,7 @@ fun LearningCenterScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(17.dp)
     ) {
         Text("LEARNING CENTER", style = MaterialTheme.typography.titleLarge)
 
@@ -145,7 +144,7 @@ fun AchievementCard(
 
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = true,showSystemUi = true)
 @Composable
 fun PreviewLearningCenterScreen() {
     MaterialTheme {

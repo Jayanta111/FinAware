@@ -1,11 +1,8 @@
-import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.flow.Flow
+package org.finAware.project.authentication
 
 interface AuthService {
-    val currentUser: Flow<FirebaseUser?>
-    val isAuthenticated: Boolean
-
-    suspend fun authenticate(email: String, password: String)
-    suspend fun createUser(email: String, password: String)
-    suspend fun signOut()
+    fun login(email: String, password: String, onResult: (Boolean) -> Unit)
+    fun signUp(email: String, password: String, onResult: (Boolean) -> Unit)
+    fun logout()
+    fun getCurrentUserEmail(): String?
 }

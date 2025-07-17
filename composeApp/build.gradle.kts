@@ -91,7 +91,14 @@ dependencies {
 // FIREBASE
     implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
     implementation("com.google.firebase:firebase-auth")
+    //Google auth
+    implementation("com.google.android.gms:play-services-auth:21.1.1")
+
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
 // UI
     implementation("androidx.compose.material3:material3:1.2.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+
 }

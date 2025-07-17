@@ -1,24 +1,15 @@
 package org.finAware.project.authentication
 
-import AuthService
-import AuthServiceImpl
 import android.app.Activity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import org.finAware.project.R.drawable.google
-import androidx.compose.ui.tooling.preview.Preview
-import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-
 
 @Composable
 fun LoginScreen(
@@ -28,13 +19,6 @@ fun LoginScreen(
     viewModel: AuthViewModel,
     onBack: () -> Unit
 ) {
-
-    val activity = LocalView.current.context as? Activity
-
-    val viewModel = remember {
-        AuthViewModel(AuthServiceImpl(requireNotNull(activity)))
-    }
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -76,10 +60,13 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                viewModel.login(email, password) { error ->
-                    errorMessage = error
+                viewModel.login(email, password) { success ->
+                    if (success) {
+                        onLoginSuccess()
+                    } else {
+                        errorMessage = "Login failed. Please check your credentials."
+                    }
                 }
-                onLoginSuccess()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -111,42 +98,6 @@ fun LoginScreen(
 
         TextButton(onClick = onBack) {
             Text("← Back to Home")
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginPreview() {
-    val fakeAuthService = object : AuthService {
-        override val currentUser: StateFlow<FirebaseUser?> = MutableStateFlow(null)
-        override val isAuthenticated: Boolean = false
-        override suspend fun authenticate(email: String, password: String) {}
-        override suspend fun createUser(email: String, password: String) {}
-        override suspend fun signOut() {}
-        fun startPhoneVerification(
-            phone: String,
-            onCodeSent: () -> Unit,
-            onError: (Exception) -> Unit
-        ) {}
-        fun verifyPhoneCode(
-            code: String,
-            onSuccess: () -> Unit,
-            onError: (Exception) -> Unit
-        ) {}
-    }
-
-    val fakeViewModel = AuthViewModel(authService = fakeAuthService)
-
-    MaterialTheme {
-        Surface {
-            LoginScreen(
-                onNavigateToSignUp = {},
-                onLoginSuccess = {},
-                onGoogleSignInClick = {},
-                viewModel = fakeViewModel,
-                onBack = {}
-            )
         }
     }
 }

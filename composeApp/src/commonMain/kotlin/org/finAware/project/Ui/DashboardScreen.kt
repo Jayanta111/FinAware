@@ -29,7 +29,7 @@ fun DashboardScreen() {
                     .padding(16.dp)
                     .wrapContentHeight()
             ) {
-                Text("FinAWARE", style = MaterialTheme.typography.headlineLarge)
+                Text("FinAware", style = MaterialTheme.typography.headlineLarge)
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // Row of StatCards

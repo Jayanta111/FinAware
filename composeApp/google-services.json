@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "225647632244",
-    "project_id": "finaware-42548",
-    "storage_bucket": "finaware-42548.firebasestorage.app"
+    "project_number": "309970845760",
+    "project_id": "finaware-6768e",
+    "storage_bucket": "finaware-6768e.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:225647632244:android:3f1b6b28c4c26cf74fd621",
+        "mobilesdk_app_id": "1:309970845760:android:1cc47741824b228b825fa5",
         "android_client_info": {
           "package_name": "org.finAware.project"
         }
       },
       "oauth_client": [
         {
-          "client_id": "",
+          "client_id": "309970845760-b64bbo7k5pfkrsnme3grgfl4vkptdf7m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.finAware.project",
+            "certificate_hash": "a58ba7d31aa8ce4f3990be76ebbb24221eedf14c"
+          }
+        },
+        {
+          "client_id": "309970845760-4roluffptd6k3fq0282gqavescgafa03.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCfmfUlXTQ_Eszwmxu7gpJCHNgltQ2zylM"
+          "current_key": "AIzaSyDolgsHUkXTzb3OwXWK2WG_LfdnyQQv2po"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "225647632244-kcq5lbt92bmrncuo1fabddmdabvf1ll7.apps.googleusercontent.com",
+              "client_id": "309970845760-0asa4g83bior8o9opnrpsj48ptsoosnr.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

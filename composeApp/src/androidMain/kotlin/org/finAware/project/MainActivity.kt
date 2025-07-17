@@ -1,86 +1,71 @@
 package org.finAware.project
 
-import AuthServiceImpl
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import org.finAware.project.authentication.*
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import org.finAware.project.Ui.Navigation.AppNavigation
 import org.finAware.project.Ui.theme.FinAwareTheme
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val RC_SIGN_IN = 9001
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        // Initialize Google Sign-In
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
         setContent {
-            FinAwareApp()
-        }
-    }
-}
-
-@Composable
-fun FinAwareApp() {
-    val context = LocalContext.current
-    val activity = context as ComponentActivity
-
-    // Simple navigation logic
-    var currentScreen by remember { mutableStateOf("home") }
-
-    // ViewModel with Android activity passed in
-    val viewModel = remember {
-        AuthViewModel(AuthServiceImpl(activity))
-    }
-
-    FinAwareTheme {
-        when (currentScreen) {
-            "home" -> FinAwareHomeScreen(
-                onGoogleSignInClick = {
-                    // TODO: Trigger Google Sign-In if needed
-                },
-                onNavigateToLogin = {
-                    currentScreen = "login"
-                }
-            )
-
-            "login" -> LoginScreen(
-                onNavigateToSignUp = {
-                    currentScreen = "signup"
-                },
-                onLoginSuccess = {
-                    currentScreen = "home"
-                },
-                onGoogleSignInClick = {
-                    // TODO: Trigger Google Sign-In
-                },
-                viewModel = viewModel,
-                onBack = {
-                    currentScreen = "home"
-                }
-            )
-
-            "signup" -> SignUpScreen(
-                onSignUpClick = { name, email, phone, password ->
-                    viewModel.signUp(email, password) {
-                        // error handling can go here
+            FinAwareTheme {
+                AppNavigation(
+                    onGoogleSignIn = {
+                        val signInIntent = googleSignInClient.signInIntent
+                        startActivityForResult(signInIntent, RC_SIGN_IN)
                     }
-                },
-                onVerifyOtpClick = { otp ->
-                    // You could use `viewModel.verifyPhoneCode(...)`
-                },
-                onBack = {
-                    currentScreen = "login"
-                }
-            )
+                )
+            }
         }
     }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun AppPreview() {
-    FinAwareApp()
+    @Deprecated("Use registerForActivityResult instead when ready.")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.result
+                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+
+                firebaseAuth.signInWithCredential(credential)
+                    .addOnCompleteListener(this) { signInTask ->
+                        if (signInTask.isSuccessful) {
+                            Toast.makeText(this, "Google Sign-In Successful", Toast.LENGTH_SHORT).show()
+                            // TODO: Navigate to Dashboard screen (currently handled in AppNavigation if authViewModel is observing user state)
+                        } else {
+                            Toast.makeText(this, "Sign-In Failed", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            } catch (e: Exception) {
+                Toast.makeText(this, "Google Sign-In Failed: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
 }
