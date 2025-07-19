@@ -12,12 +12,23 @@ import org.finAware.project.ui.DashboardScreen
 @Composable
 fun AppNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "dashboard") {
-        composable("dashboard") { DashboardScreen(navController) }
-        composable("simulator") { FraudSimulatorScreen(navController) }
-        composable("learning") { LearningCenterScreen(navController) }
-        composable("profile") { ProfileScreen(navController) }
+        composable("dashboard") {
+            DashboardScreen(navController)
+        }
+        composable("simulator") {
+            FraudSimulatorScreen(navController)
+        }
+        composable("learning") {
+            LearningCenterScreen(navController)
+        }
+        composable("profile") {
+            ProfileScreen(navController)
+        }
 
-    }
+// inside AppNavHost
+        composable("learning") {
+            LearningCenterScreen(navController)
+        }
+
+        learningGraph(navController)    }
 }
-
-

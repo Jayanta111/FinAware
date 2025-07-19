@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        // Initialize Google Sign-In
+        // 🔐 Initialize Google Sign-In options
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
@@ -34,6 +34,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             FinAwareTheme {
+                // 🔄 All navigation handled in AppNavigation based on login state
                 AppNavigation(
                     onGoogleSignIn = {
                         val signInIntent = googleSignInClient.signInIntent
@@ -58,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     .addOnCompleteListener(this) { signInTask ->
                         if (signInTask.isSuccessful) {
                             Toast.makeText(this, "Google Sign-In Successful", Toast.LENGTH_SHORT).show()
-                            // TODO: Navigate to Dashboard screen (currently handled in AppNavigation if authViewModel is observing user state)
+                            // ✅ No need to navigate manually here if you observe auth state in AppNavigation
                         } else {
                             Toast.makeText(this, "Sign-In Failed", Toast.LENGTH_SHORT).show()
                         }

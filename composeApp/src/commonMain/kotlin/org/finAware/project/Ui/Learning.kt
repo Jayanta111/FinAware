@@ -44,7 +44,9 @@ fun LearningCenterScreen(navController: NavController) {
                             label = course.label,
                             description = course.description,
                             modifier = Modifier.width(220.dp),
-                            onStartClick = { navController.navigate("courseDetail/${course.route}") }
+                            onStartClick = {
+                                navController.navigate("courseDetail/${course.route}")
+                            }
                         )
                     }
                 }
@@ -58,7 +60,9 @@ fun LearningCenterScreen(navController: NavController) {
                             label = course.label,
                             description = course.description,
                             modifier = Modifier.width(220.dp),
-                            onStartClick = { navController.navigate("courseDetail/${course.route}") }
+                            onStartClick = {
+                                navController.navigate("courseDetail/${course.route}")
+                            }
                         )
                     }
                 }
