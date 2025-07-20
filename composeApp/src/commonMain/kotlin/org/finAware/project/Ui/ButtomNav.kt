@@ -23,10 +23,10 @@ data class BottomNavItem(
 @Composable
 fun BottomNavBar(navController: NavController) {
     val items = listOf(
-        BottomNavItem("Dashboard", Icons.Filled.Dashboard, "dashboard"),
+        BottomNavItem("Dashboard", Icons.Filled.Dashboard, "DashboardScreen"),
         BottomNavItem("Simulator", Icons.Filled.Settings, "simulator"),
         BottomNavItem("Learning", Icons.Filled.School, "learning"),
-        BottomNavItem("Profile", Icons.Filled.Person, "profile")
+        BottomNavItem("Profile", Icons.Filled.Person, "ProfileScreen")
     )
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()

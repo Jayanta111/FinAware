@@ -4,7 +4,6 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -18,7 +17,6 @@ import org.finAware.project.authentication.LoginScreen
 import org.finAware.project.authentication.SignUpScreen
 import org.finAware.project.ui.DashboardScreen
 
-// Sealed class for routes
 sealed class Screen(val route: String) {
     data object Home : Screen("home")
     data object Login : Screen("login")
@@ -43,44 +41,31 @@ fun AppNavigation(
 
     NavHost(navController = navController, startDestination = Screen.Home.route) {
 
-        // 🚪 Home Screen (Welcome)
         composable(Screen.Home.route) {
             FinAwareHomeScreen(
-                onGoogleSignInClick = {
-                    onGoogleSignIn()
-                },
-                onNavigateToLogin = {
-                    navController.navigate(Screen.Login.route)
-                }
+                onGoogleSignInClick = { onGoogleSignIn() },
+                onNavigateToLogin = { navController.navigate(Screen.Login.route) }
             )
         }
 
-        // 🔐 Login Screen
         composable(Screen.Login.route) {
             LoginScreen(
-                onNavigateToSignUp = {
-                    navController.navigate(Screen.SignUp.route)
-                },
+                onNavigateToSignUp = { navController.navigate(Screen.SignUp.route) },
                 onLoginSuccess = {
                     navController.navigate(Screen.Dashboard.route) {
                         popUpTo(Screen.Home.route) { inclusive = true }
                     }
                 },
-                onGoogleSignInClick = {
-                    onGoogleSignIn()
-                },
+                onGoogleSignInClick = { onGoogleSignIn() },
                 viewModel = authViewModel,
-                onBack = {
-                    navController.popBackStack()
-                }
+                onBack = { navController.popBackStack() }
             )
         }
 
-        // 🆕 Sign Up Screen
         composable(Screen.SignUp.route) {
             SignUpScreen(
                 onSignUpClick = { name, email, phone, password ->
-                    authViewModel.signUp(email, password) { isSuccess ->
+                    authViewModel.signUp(name, email, phone, password) { isSuccess, _ ->
                         if (isSuccess) {
                             navController.navigate(Screen.Dashboard.route) {
                                 popUpTo(Screen.Home.route) { inclusive = true }
@@ -88,36 +73,27 @@ fun AppNavigation(
                         }
                     }
                 },
-                onVerifyOtpClick = { otp ->
-                    // Future OTP logic
-                },
-                onBack = {
-                    navController.popBackStack()
-                }
+                onVerifyOtpClick = { /* OTP unused */ },
+                onBack = { navController.popBackStack() }
             )
         }
 
-        // 🏠 Dashboard (Main Bottom Nav)
         composable(Screen.Dashboard.route) {
             DashboardScreen(navController)
         }
 
-        // 🧠 Fraud Simulator
         composable(Screen.Simulator.route) {
             FraudSimulatorScreen(navController)
         }
 
-        // 📚 Learning Center
         composable(Screen.Learning.route) {
             LearningCenterScreen(navController)
         }
 
-        // 👤 Profile Screen
         composable(Screen.Profile.route) {
             ProfileScreen(navController)
         }
 
-        // 🧭 Inject nested learning navigation (Course Detail & Content)
         learningGraph(navController)
     }
 }

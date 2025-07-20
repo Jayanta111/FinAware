@@ -8,12 +8,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SignUpScreen(
-    onSignUpClick: (String, String, String, String) -> Unit,
-    onVerifyOtpClick: (String) -> Unit,
+    onSignUpClick: (fullName: String, email: String, phone: String, password: String) -> Unit,
+    onVerifyOtpClick: (otp: String) -> Unit,
     onBack: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
@@ -80,8 +79,12 @@ fun SignUpScreen(
 
         Button(
             onClick = {
-                onSignUpClick(email, password, phone, name)
-                otpSent = true
+                if (name.isNotBlank() && email.isNotBlank() && phone.isNotBlank() && password.isNotBlank()) {
+                    onSignUpClick(name, email, phone, password)
+                    otpSent = true
+                } else {
+                    errorMessage = "Please fill all fields"
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -90,8 +93,7 @@ fun SignUpScreen(
 
         if (otpSent) {
             Spacer(modifier = Modifier.height(16.dp))
-
-            Text("Enter OTP sent to your phone")
+            Text("Enter OTP sent to your phone", fontSize = 16.sp)
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -105,7 +107,13 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
-                onClick = { onVerifyOtpClick(otp) },
+                onClick = {
+                    if (otp.isNotBlank()) {
+                        onVerifyOtpClick(otp)
+                    } else {
+                        errorMessage = "Please enter OTP"
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Verify OTP")
@@ -116,26 +124,6 @@ fun SignUpScreen(
 
         TextButton(onClick = onBack) {
             Text("← Back to Login")
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SignUpPreview() {
-    MaterialTheme {
-        Surface {
-            SignUpScreen(
-                onSignUpClick = { name, email, phone, password ->
-                    println("Preview sign-up clicked: $name, $email, $phone, $password")
-                },
-                onVerifyOtpClick = { otp ->
-                    println("Preview OTP verify: $otp")
-                },
-                onBack = {
-                    println("Preview back clicked")
-                }
-            )
         }
     }
 }

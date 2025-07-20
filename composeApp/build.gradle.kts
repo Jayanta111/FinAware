@@ -23,6 +23,8 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation("com.google.firebase:firebase-firestore-ktx:24.10.1")
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
