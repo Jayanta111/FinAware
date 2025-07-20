@@ -1,20 +1,27 @@
 package org.finAware.project.Ui.Navigation
 
 import androidx.activity.ComponentActivity
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import org.finAware.project.FinAwareHomeScreen
 import org.finAware.project.Ui.FraudSimulatorScreen
+import org.finAware.project.Ui.FraudTipsScreen
+import org.finAware.project.Ui.FraudTypeSelectionScreen
 import org.finAware.project.Ui.LearningCenterScreen
 import org.finAware.project.Ui.ProfileScreen
 import org.finAware.project.authentication.AuthServiceImpl
 import org.finAware.project.authentication.AuthViewModel
 import org.finAware.project.authentication.LoginScreen
 import org.finAware.project.authentication.SignUpScreen
+import org.finAware.project.model.FraudType
 import org.finAware.project.ui.DashboardScreen
 
 sealed class Screen(val route: String) {
@@ -22,10 +29,13 @@ sealed class Screen(val route: String) {
     data object Login : Screen("login")
     data object SignUp : Screen("signup")
     data object Dashboard : Screen("DashboardScreen")
-    data object Simulator : Screen("simulator")
+    data object SimulatorSelection : Screen("Simulator") // FraudTypeSelectionScreen
+    data object Simulator : Screen("simulate/{type}") // FraudSimulatorScreen
     data object Learning : Screen("learning")
     data object Profile : Screen("ProfileScreen")
+    data object Tips : Screen("tips")
 }
+
 
 @Composable
 fun AppNavigation(
@@ -39,7 +49,11 @@ fun AppNavigation(
         factory = AuthViewModel.AuthViewModelFactory(AuthServiceImpl(activity))
     )
 
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    // Determine start screen based on auth status
+    val isUserLoggedIn = remember { authViewModel.isUserLoggedIn() }
+    val startDestination = if (isUserLoggedIn) Screen.Dashboard.route else Screen.Home.route
+
+    NavHost(navController = navController, startDestination = startDestination) {
 
         composable(Screen.Home.route) {
             FinAwareHomeScreen(
@@ -73,7 +87,7 @@ fun AppNavigation(
                         }
                     }
                 },
-                onVerifyOtpClick = { /* OTP unused */ },
+                onVerifyOtpClick = { /* TODO */ },
                 onBack = { navController.popBackStack() }
             )
         }
@@ -82,12 +96,37 @@ fun AppNavigation(
             DashboardScreen(navController)
         }
 
-        composable(Screen.Simulator.route) {
-            FraudSimulatorScreen(navController)
+        composable(
+            route = Screen.Simulator.route,
+            arguments = listOf(navArgument("type") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type")
+            val fraudType = try {
+                FraudType.valueOf(type ?: "")
+            } catch (e: IllegalArgumentException) {
+                null
+            }
+
+            if (fraudType != null) {
+                FraudSimulatorScreen(
+                    navController = navController,
+                    fraudType = fraudType
+                )
+            } else {
+                Text("Invalid simulation type: $type")
+            }
         }
 
         composable(Screen.Learning.route) {
             LearningCenterScreen(navController)
+        }
+
+        composable(Screen.SimulatorSelection.route) {
+            FraudTypeSelectionScreen(navController)
+        }
+
+        composable(Screen.Tips.route) {
+            FraudTipsScreen(navController)
         }
 
         composable(Screen.Profile.route) {
@@ -97,3 +136,4 @@ fun AppNavigation(
         learningGraph(navController)
     }
 }
+

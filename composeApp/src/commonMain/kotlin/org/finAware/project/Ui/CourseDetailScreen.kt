@@ -45,7 +45,6 @@ fun CourseDetailScreen(navController: NavController, courseId: String) {
                 Spacer(Modifier.height(16.dp))
                 Button(
                     onClick = {
-                        // ✅ Navigate to course content screen correctly
                         navController.navigate("courseContent/${course.route}")
                     },
                     modifier = Modifier.fillMaxWidth()

@@ -74,8 +74,10 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.firebase.messaging.ktx)
     debugImplementation(compose.uiTooling)
-    implementation("androidx.compose.material:material-icons-extended:<compose_version>")
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
     // Compose
     implementation("org.jetbrains.compose.runtime:runtime:1.5.10")
     implementation("org.jetbrains.compose.material3:material3:1.5.10")

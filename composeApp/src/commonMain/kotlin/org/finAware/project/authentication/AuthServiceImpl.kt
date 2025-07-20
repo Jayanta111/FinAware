@@ -1,10 +1,11 @@
 package org.finAware.project.authentication
 
 import android.app.Activity
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 class AuthServiceImpl(private val activity: Activity) : AuthService {
+
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
     override fun login(email: String, password: String, onResult: (Boolean) -> Unit) {
@@ -27,5 +28,9 @@ class AuthServiceImpl(private val activity: Activity) : AuthService {
 
     override fun getCurrentUserEmail(): String? {
         return firebaseAuth.currentUser?.email
+    }
+
+    override fun getCurrentUser(): FirebaseUser? {
+        return firebaseAuth.currentUser
     }
 }

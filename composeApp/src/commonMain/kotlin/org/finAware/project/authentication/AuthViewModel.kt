@@ -1,14 +1,13 @@
-// androidMain/kotlin/org/finAware/project/authentication/AuthViewModel.kt
 package org.finAware.project.authentication
 
 import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Firebase
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
-import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.finAware.project.firebase.UserRepository
 import org.finAware.project.model.User
@@ -19,6 +18,14 @@ class AuthViewModel(private val authService: AuthService) : ViewModel() {
     private val firebaseAuth = FirebaseAuth.getInstance()
     private var verificationId: String? = null
 
+    // 🔄 Login session state (reactive)
+    private val _isLoggedIn = MutableStateFlow(authService.getCurrentUser() != null)
+    val isLoggedIn: StateFlow<Boolean> get() = _isLoggedIn
+
+    // ✅ Check login state (non-reactive usage)
+    fun isUserLoggedIn(): Boolean = _isLoggedIn.value
+
+    // 🔐 Send OTP to phone
     fun sendOtp(
         phone: String,
         activity: Activity,
@@ -30,10 +37,14 @@ class AuthViewModel(private val authService: AuthService) : ViewModel() {
             .setTimeout(60L, TimeUnit.SECONDS)
             .setActivity(activity)
             .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
+                override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                    // Auto-complete ignored for manual flow
+                }
+
                 override fun onVerificationFailed(e: FirebaseException) {
                     onError(e.message ?: "OTP verification failed.")
                 }
+
                 override fun onCodeSent(vid: String, token: PhoneAuthProvider.ForceResendingToken) {
                     verificationId = vid
                     onSent()
@@ -43,6 +54,7 @@ class AuthViewModel(private val authService: AuthService) : ViewModel() {
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
+    // ✅ Register with OTP then sign up
     fun verifyOtpAndRegister(
         otp: String,
         fullName: String,
@@ -67,6 +79,7 @@ class AuthViewModel(private val authService: AuthService) : ViewModel() {
             }
     }
 
+    // 👤 Create user in Auth + Firestore
     fun signUp(
         fullName: String,
         email: String,
@@ -76,6 +89,7 @@ class AuthViewModel(private val authService: AuthService) : ViewModel() {
     ) {
         authService.signUp(email, password) { success ->
             if (success) {
+                _isLoggedIn.value = true
                 viewModelScope.launch {
                     val user = User(fullName, email, phone)
                     val result = UserRepository.saveUser(user)
@@ -91,13 +105,23 @@ class AuthViewModel(private val authService: AuthService) : ViewModel() {
         }
     }
 
+    // 🔓 Login and update session state
     fun login(email: String, password: String, onResult: (Boolean) -> Unit) {
-        authService.login(email, password, onResult)
+        authService.login(email, password) { success ->
+            _isLoggedIn.value = success
+            onResult(success)
+        }
     }
 
-    fun logout() = authService.logout()
+    // 🚪 Logout and clear session
+    fun logout() {
+        authService.logout()
+        _isLoggedIn.value = false
+    }
+
     fun getCurrentUserEmail(): String? = authService.getCurrentUserEmail()
 
+    // 🧪 ViewModel Factory
     class AuthViewModelFactory(private val service: AuthService) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return AuthViewModel(service) as T
