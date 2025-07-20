@@ -1,5 +1,9 @@
 package org.finAware.project.firestore
 
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.tasks.await
+
 /*
 courses (collection)
  └── courseId (document)
@@ -35,3 +39,58 @@ data class Course(
     val createdAt: com.google.firebase.Timestamp? = null,
     val updatedAt: com.google.firebase.Timestamp? = null
 )
+
+data class QuizItem(
+    val question: String = "",
+    val options: List<String>? = null, // Only for MCQ
+    val answer: String = "",
+    val type: String = "" // "MCQ" or "SortAns"
+)
+
+data class RelatedContent(
+    val content: String = "",
+    val title: String = "",
+    val lastUpdated: com.google.firebase.Timestamp? = null,
+    val relatedLink: String = ""
+)
+
+class CourseMethods {
+
+    suspend fun fetchQuiz(
+        courseId: String,
+        moduleId: String
+    ): List<QuizItem> {
+        val firestore = Firebase.firestore
+        val snapshot = firestore
+            .collection("courses")
+            .document(courseId)
+            .collection("Modules")
+            .document(moduleId)
+            .collection("Quiz")
+            .get()
+            .await()
+
+        return snapshot.documents.mapNotNull { it.toObject(QuizItem::class.java) }
+    }
+
+    suspend fun fetchRelatedContent(
+        courseId: String,
+        moduleId: String
+    ): List<RelatedContent> {
+        val firestore = Firebase.firestore
+        val snapshot = firestore
+            .collection("courses")
+            .document(courseId)
+            .collection("Modules")
+            .document(moduleId)
+            .collection("relatedContent")
+            .get()
+            .await()
+
+        return snapshot.documents.mapNotNull { it.toObject(RelatedContent::class.java) }
+    }
+}
+
+// example
+// val quizItems = courseMethods.fetchQuiz("course123", "module456")
+// val relatedItems = courseMethods.fetchRelatedContent("course123", "module456")
