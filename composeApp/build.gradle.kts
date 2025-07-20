@@ -97,7 +97,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     //Google auth
     implementation("com.google.android.gms:play-services-auth:21.1.1")
-
+    implementation("com.google.firebase:firebase-firestore")
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
 // UI
