@@ -40,20 +40,6 @@ data class Course(
     val updatedAt: com.google.firebase.Timestamp? = null
 )
 
-data class QuizItem(
-    val question: String = "",
-    val options: List<String>? = null, // Only for MCQ
-    val answer: String = "",
-    val type: String = "" // "MCQ" or "SortAns"
-)
-
-data class RelatedContent(
-    val content: String = "",
-    val title: String = "",
-    val lastUpdated: com.google.firebase.Timestamp? = null,
-    val relatedLink: String = ""
-)
-
 class CourseMethods {
 
     suspend fun fetchQuiz(

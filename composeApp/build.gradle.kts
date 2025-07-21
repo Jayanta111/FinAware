@@ -104,5 +104,9 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.2.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
-
+// markdown
+    implementation("io.noties.markwon:core:4.6.2")
+    implementation("io.noties.markwon:html:4.6.2")
+    implementation("io.noties.markwon:image:4.6.2")
+    implementation("io.noties.markwon:ext-tables:4.6.2")
 }
