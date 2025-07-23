@@ -3,6 +3,8 @@ agp = "8.7.3"
 android-compileSdk = "35"
 android-minSdk = "25"
 android-targetSdk = "35"
+desugar = "2.0.4"
+
 androidx-activity = "1.10.1"
 androidx-appcompat = "1.7.0"
 androidx-constraintlayout = "2.2.1"
@@ -22,8 +24,11 @@ firebaseFirestoreKtx = "25.1.4"
 navigationComposeJvmstubs = "2.9.1"
 composeMaterial = "1.4.1"
 firebaseMessagingKtx = "24.1.2"
+firebaseCrashlyticsBuildtools = "3.0.5"
 
 [libraries]
+desugar_jdk = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar" }
+
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -43,6 +48,7 @@ firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-fires
 androidx-navigation-compose-jvmstubs = { group = "androidx.navigation", name = "navigation-compose-jvmstubs", version.ref = "navigationComposeJvmstubs" }
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

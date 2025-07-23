@@ -1,6 +1,8 @@
 package org.finAware.project.Ui.Navigation
 
+import android.os.Build
 import androidx.activity.ComponentActivity
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -15,14 +17,18 @@ import org.finAware.project.FinAwareHomeScreen
 import org.finAware.project.Ui.FraudSimulatorScreen
 import org.finAware.project.Ui.FraudTipsScreen
 import org.finAware.project.Ui.FraudTypeSelectionScreen
-import org.finAware.project.Ui.LearningCenterScreen
 import org.finAware.project.Ui.ProfileScreen
+import org.finAware.project.api.LearningViewModel
 import org.finAware.project.authentication.AuthServiceImpl
 import org.finAware.project.authentication.AuthViewModel
 import org.finAware.project.authentication.LoginScreen
 import org.finAware.project.authentication.SignUpScreen
 import org.finAware.project.model.FraudType
+import org.finAware.project.model.LearningEntry
 import org.finAware.project.ui.DashboardScreen
+import org.finaware.project.ui.screens.LearningCenterScreen
+import org.finaware.project.ui.screens.LearningCenterScreen
+
 
 sealed class Screen(val route: String) {
     data object Home : Screen("home")
@@ -37,6 +43,7 @@ sealed class Screen(val route: String) {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigation(
     onGoogleSignIn: () -> Unit
@@ -133,7 +140,9 @@ fun AppNavigation(
             ProfileScreen(navController)
         }
 
-        learningGraph(navController)
-    }
+        learningGraph(
+            navController = navController,
+            learningViewModel = LearningViewModel()
+        )    }
 }
 

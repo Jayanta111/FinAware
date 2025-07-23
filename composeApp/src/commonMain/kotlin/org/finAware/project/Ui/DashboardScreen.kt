@@ -16,7 +16,7 @@ import org.finAware.project.Ui.BottomNavBar
 @Composable
 fun DashboardScreen(navController: NavHostController) {
     Scaffold(
-        bottomBar = { BottomNavBar(navController) }
+        bottomBar = { BottomNavBar(navController, "learning") }
     ) { innerPadding ->
         val scrollState = rememberScrollState()
 

@@ -1,10 +1,8 @@
 package org.finAware.project.firestore
 
-data class RelatedContent(
+data class CourseRelatedContent(
     val id: String = "",
     val title: String = "",
-    val content: String = "",
-    val lastUpdated: com.google.firebase.Timestamp? = null,
-    val relatedLinks: List<String>?= null,
-
+    val description: String = "",
+    val url: String = ""
 )

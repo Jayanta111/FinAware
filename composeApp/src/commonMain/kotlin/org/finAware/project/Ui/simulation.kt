@@ -1,6 +1,5 @@
 package org.finAware.project.Ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,7 +19,7 @@ fun FraudSimulatorScreen(navController: NavController, fraudType: FraudType?) {
 
     Scaffold(
         bottomBar = {
-            BottomNavBar(navController = navController)
+            BottomNavBar(navController = navController, currentRoute = "learning")
         }
     ) { padding ->
         Box(modifier = Modifier

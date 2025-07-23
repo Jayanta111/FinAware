@@ -119,6 +119,18 @@ fun ProfileScreen(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Your Progress", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(4.dp))
+            LinearProgressIndicator(progress = 0.4f, modifier = Modifier.fillMaxWidth())
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Achievements", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("• Completed 2 courses\n• Scored 80% in last quiz")
+
+            Spacer(modifier = Modifier.height(16.dp))
+
 
             Button(
                 onClick = {

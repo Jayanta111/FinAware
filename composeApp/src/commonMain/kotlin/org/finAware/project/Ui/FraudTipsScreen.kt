@@ -43,13 +43,13 @@ fun FraudTipsScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = {
-                navController.navigate("DashboardScreen") // Or "home" or "learning"
+                navController.navigate("simulator") // Or "home" or "learning"
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary
             )
         ) {
-            Text("Back to Dashboard")
+            Text("Back to Simulator")
         }
     }
 }

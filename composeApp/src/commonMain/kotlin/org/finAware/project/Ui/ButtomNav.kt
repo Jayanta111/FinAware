@@ -21,11 +21,11 @@ data class BottomNavItem(
 )
 
 @Composable
-fun BottomNavBar(navController: NavController) {
+fun BottomNavBar(navController: NavController, currentRoute: String) {
     val items = listOf(
         BottomNavItem("Dashboard", Icons.Filled.Dashboard, "DashboardScreen"),
         BottomNavItem("Simulator", Icons.Filled.Settings, "simulator"),
-        BottomNavItem("Learning", Icons.Filled.School, "learning"),
+        BottomNavItem("Learning", Icons.Filled.School, currentRoute),
         BottomNavItem("Profile", Icons.Filled.Person, "ProfileScreen")
     )
 

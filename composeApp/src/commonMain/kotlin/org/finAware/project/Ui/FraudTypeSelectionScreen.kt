@@ -27,7 +27,7 @@ fun FraudTypeSelectionScreen(navController: NavController) {
             )
         },
         bottomBar = {
-            BottomNavBar(navController)
+            BottomNavBar(navController, "learning")
         }
     ) { innerPadding ->
         Column(
