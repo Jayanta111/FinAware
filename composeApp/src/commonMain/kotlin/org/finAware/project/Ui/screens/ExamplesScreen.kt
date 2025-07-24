@@ -10,13 +10,12 @@ import kotlinx.coroutines.launch
 import io.ktor.client.*
 import org.finAware.project.api.fetchLearningEntries
 import org.finAware.project.model.LearningEntry
-import org.finAware.project.ui.getDummyCourses
 
 @Composable
 fun ExamplesScreen(
     courseId: String,
     selectedLanguage: String,
-    client: HttpClient? = null
+    client: HttpClient
 ) {
     var entry by remember { mutableStateOf<LearningEntry?>(null) }
     val scope = rememberCoroutineScope()
@@ -24,36 +23,43 @@ fun ExamplesScreen(
     LaunchedEffect(courseId, selectedLanguage) {
         scope.launch {
             try {
-                val allEntries = client?.let { fetchLearningEntries(it) } ?: getDummyCourses()
-                entry = allEntries.firstOrNull { it.courseId == courseId && it.language == selectedLanguage }
-            } catch (e: Exception) {
-                entry = getDummyCourses().firstOrNull { it.courseId == courseId && it.language == selectedLanguage }
+                val allEntries = fetchLearningEntries(client)
+                entry = allEntries.firstOrNull {
+                    it.courseId.equals(courseId, ignoreCase = true) &&
+                            it.language.equals(selectedLanguage, ignoreCase = true)
+                }
+            } catch (_: Exception) {
+                entry = null
             }
         }
     }
 
     if (entry == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Loading...")
+            CircularProgressIndicator()
         }
     } else {
-        Column(Modifier.padding(16.dp)) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)) {
+
             Text(
-                text = when (selectedLanguage) {
-                    "en" -> "Examples (English)"
-                    "hi" -> "उदाहरण (हिंदी)"
-                    "pn" -> "ਉਦਾਹਰਨਾਂ (ਪੰਜਾਬੀ)"
-                    "as" -> "উদাহৰণ (অসমীয়া)"
-                    else -> "Examples"
+                text = when (selectedLanguage.lowercase()) {
+                    "en" -> "Some examples of ${entry!!.title}"
+                    "hi" -> "${entry!!.title} के कुछ उदाहरण"
+                    "pn" -> "${entry!!.title} ਦੇ ਕੁਝ ਉਦਾਹਰਨ"
+                    "as" -> "${entry!!.title} ৰ কিছুমান উদাহৰণ"
+                    else -> "Some examples of ${entry!!.title}"
                 },
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleMedium
             )
+
             Spacer(Modifier.height(8.dp))
 
-            when (selectedLanguage) {
-                "en", "hi", "pn", "as" -> Text(text = entry!!.example, style = MaterialTheme.typography.bodyLarge)
-                else -> Text("No examples available for selected language.")
-            }
+            Text(
+                text = entry!!.example,
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     }
 }

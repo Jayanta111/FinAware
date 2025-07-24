@@ -14,13 +14,12 @@ import io.ktor.http.*
 import kotlinx.coroutines.launch
 import org.finAware.project.model.QuizPayload
 import org.finAware.project.model.QuizQuestion
-import org.finAware.project.ui.getDummyQuizzes
 
 @Composable
-fun QuizScreen(courseId: String, selectedLanguage: String, client: HttpClient? = null) {
+fun QuizScreen(courseId: String, selectedLanguage: String, client: HttpClient) {
     val scope = rememberCoroutineScope()
     var quizTitle by remember { mutableStateOf("") }
-    var quizItems: List<QuizQuestion> by remember { mutableStateOf(emptyList()) }
+    var quizItems by remember { mutableStateOf<List<QuizQuestion>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
     var submitted by remember { mutableStateOf(false) }
     var userAnswers = remember { mutableStateListOf<Int?>() }
@@ -30,9 +29,8 @@ fun QuizScreen(courseId: String, selectedLanguage: String, client: HttpClient? =
     LaunchedEffect(courseId, selectedLanguage) {
         scope.launch {
             try {
-                val actualClient = client ?: HttpClient()
                 val response: HttpResponse =
-                    actualClient.get("https://finaware-backend.onrender.com/quiz/$courseId")
+                    client.get("https://finaware-backend.onrender.com/quiz/$courseId")
 
                 if (response.status == HttpStatusCode.OK) {
                     val payloadList: List<QuizPayload> = response.body()
@@ -40,18 +38,10 @@ fun QuizScreen(courseId: String, selectedLanguage: String, client: HttpClient? =
                         val quiz = payloadList.first()
                         quizTitle = quiz.title
                         quizItems = quiz.questions
-                    } else {
-                        quizItems = getDummyQuizzes(courseId)
-                        quizTitle = "Dummy Quiz"
                     }
-                } else {
-                    quizItems = getDummyQuizzes(courseId)
-                    quizTitle = "Dummy Quiz"
                 }
             } catch (e: Exception) {
                 println("❌ Quiz fetch error: ${e.message}")
-                quizItems = getDummyQuizzes(courseId)
-                quizTitle = "Dummy Quiz"
             } finally {
                 loading = false
                 submitted = false
@@ -74,7 +64,7 @@ fun QuizScreen(courseId: String, selectedLanguage: String, client: HttpClient? =
                 "en" -> "Quiz: $quizTitle"
                 "hi" -> "प्रश्नोत्तरी: $quizTitle"
                 "pn" -> "ਕੁਇਜ਼: $quizTitle"
-                "As" -> "প্ৰশ্নোত্তৰ: $quizTitle"
+                "as" -> "প্ৰশ্নোত্তৰ: $quizTitle"
                 else -> "Quiz: $quizTitle"
             },
             style = MaterialTheme.typography.titleLarge
@@ -120,7 +110,7 @@ fun QuizScreen(courseId: String, selectedLanguage: String, client: HttpClient? =
                     "en" -> "Submit Quiz"
                     "hi" -> "प्रश्नोत्तरी सबमिट करें"
                     "pn" -> "ਕੁਇਜ਼ ਜਮ੍ਹਾਂ ਕਰੋ"
-                    "As" -> "প্ৰশ্নোত্তৰ দাখিল কৰক"
+                    "as" -> "প্ৰশ্নোত্তৰ দাখিল কৰক"
                     else -> "Submit Quiz"
                 }
             )
@@ -133,7 +123,7 @@ fun QuizScreen(courseId: String, selectedLanguage: String, client: HttpClient? =
                     "en" -> "You scored $score out of ${quizItems.size}"
                     "hi" -> "आपने ${quizItems.size} में से $score अंक प्राप्त किए"
                     "pn" -> "ਤੁਸੀਂ ${quizItems.size} ਵਿੱਚੋਂ $score ਸਕੋਰ ਕੀਤਾ"
-                    "As" -> "আপুনি ${quizItems.size} ৰ পৰা $score নম্বৰ লাভ কৰিছে"
+                    "as" -> "আপুনি ${quizItems.size} ৰ পৰা $score নম্বৰ লাভ কৰিছে"
                     else -> "You scored $score out of ${quizItems.size}"
                 },
                 style = MaterialTheme.typography.bodyLarge
@@ -147,9 +137,12 @@ fun QuizScreen(courseId: String, selectedLanguage: String, client: HttpClient? =
     }
 }
 
-// Extension function
 inline fun <T> List<T>.countIndexed(predicate: (index: Int, T) -> Boolean): Int {
     var count = 0
-    forEachIndexed { index, item -> if (predicate(index, item)) count++ }
+    forEachIndexed { index, item ->
+        if (predicate(index, item)) {
+            count++
+        }
+    }
     return count
 }

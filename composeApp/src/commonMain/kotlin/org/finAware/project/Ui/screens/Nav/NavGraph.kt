@@ -13,12 +13,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import io.ktor.client.*
-import kotlinx.coroutines.launch
 import org.finAware.project.Ui.CourseDetailScreen
 import org.finAware.project.model.LearningEntry
 import org.finAware.project.api.fetchLearningEntries
 import org.finAware.project.ui.LearningCenterScreen
-import org.finAware.project.ui.getDummyCourses
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.learningGraph(
@@ -30,7 +28,7 @@ fun NavGraphBuilder.learningGraph(
         startDestination = "learningHome",
         route = "learning_graph"
     ) {
-        // 🔹 Learning Home Screen (Main Screen)
+        // 🔹 Learning Home Screen
         composable("learningHome") {
             LearningCenterScreen(
                 navController = navController,
@@ -38,56 +36,62 @@ fun NavGraphBuilder.learningGraph(
                 selectedLanguage = selectedLanguage
             )
         }
+
+        // 🔹 Course Detail Screen
         composable("course_detail/{courseId}/{language}") { backStackEntry ->
             val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
             val language = backStackEntry.arguments?.getString("language") ?: "English"
 
             var entry by remember { mutableStateOf<LearningEntry?>(null) }
-            val scope = rememberCoroutineScope()
+            var isLoading by remember { mutableStateOf(true) }
 
             LaunchedEffect(courseId, language) {
-                scope.launch {
-                    try {
-                        val fetched = fetchLearningEntries(client)
-                        entry = fetched.firstOrNull {
-                            it.courseId == courseId && it.language.equals(language, ignoreCase = true)
-                        }
-
-                        if (entry == null) {
-                            entry = getDummyCourses().firstOrNull {
-                                it.courseId == courseId && it.language.equals(language, ignoreCase = true)
-                            }
-                        }
-                    } catch (e: Exception) {
-                        entry = getDummyCourses().firstOrNull {
-                            it.courseId == courseId && it.language.equals(language, ignoreCase = true)
-                        }
+                isLoading = true
+                try {
+                    val fetched = fetchLearningEntries(client)
+                    entry = fetched.firstOrNull {
+                        it.courseId == courseId && it.language.equals(language, ignoreCase = true)
                     }
+                } catch (e: Exception) {
+                    entry = null
                 }
+                isLoading = false
             }
 
-            if (entry != null) {
-                CourseDetailScreen(
-                    navController = navController,
-                    entry = entry!!,
-                    selectedLanguage = language // ✅ Fixed here
-                )
-            } else {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Course not found or loading...")
+            when {
+                isLoading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("Loading course...")
+                    }
+                }
+
+                entry != null -> {
+                    CourseDetailScreen(
+                        navController = navController,
+                        entry = entry!!,
+                        selectedLanguage = language
+                    )
+                }
+
+                else -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("Course not found.")
+                    }
                 }
             }
         }
 
-
-
-
-
         // 🔹 Course Content Screen
         composable("courseContent/{courseId}/{language}") { backStackEntry ->
             val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
-            val selectedLanguage = backStackEntry.arguments?.getString("language") ?: "en" // default
-            CourseContentNavScreen(courseId = courseId, selectedLanguage = selectedLanguage, navController = navController)
+            val selectedLanguage = backStackEntry.arguments?.getString("language") ?: "English"
+
+            CourseContentNavScreen(
+                courseId = courseId,
+                selectedLanguage = selectedLanguage,
+                navController = navController,
+                client = client
+            )
         }
     }
 }

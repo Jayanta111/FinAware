@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import io.ktor.client.*
@@ -16,9 +17,9 @@ import org.finAware.project.Ui.screens.*
 @Composable
 fun CourseContentNavScreen(
     courseId: String,
-    selectedLanguage: String = "en",  // Add default language
+    selectedLanguage: String = "en",
     navController: NavHostController,
-    client: HttpClient? = null
+    client: HttpClient // ✅ Fixed: made non-nullable
 ) {
     val localNavController = rememberNavController()
 
@@ -40,10 +41,18 @@ fun CourseContentNavScreen(
 
     Scaffold(
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 4.dp
+            ) {
                 items.forEach { item ->
                     NavigationBarItem(
-                        icon = { Icon(item.icon, contentDescription = item.title) },
+                        icon = {
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = item.title
+                            )
+                        },
                         label = { Text(item.title) },
                         selected = currentRoute == item.route,
                         onClick = {

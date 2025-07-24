@@ -10,13 +10,12 @@ import kotlinx.coroutines.launch
 import io.ktor.client.*
 import org.finAware.project.api.fetchLearningEntries
 import org.finAware.project.model.LearningEntry
-import org.finAware.project.ui.getDummyCourses
 
 @Composable
 fun PreventionScreen(
     courseId: String,
     selectedLanguage: String,
-    client: HttpClient? = null
+    client: HttpClient
 ) {
     var entry by remember { mutableStateOf<LearningEntry?>(null) }
     val scope = rememberCoroutineScope()
@@ -24,43 +23,43 @@ fun PreventionScreen(
     LaunchedEffect(courseId, selectedLanguage) {
         scope.launch {
             try {
-                val allEntries = client?.let { fetchLearningEntries(it) } ?: getDummyCourses()
-                entry = allEntries.firstOrNull { it.courseId == courseId && it.language == selectedLanguage }
-            } catch (e: Exception) {
-                entry = getDummyCourses().firstOrNull { it.courseId == courseId && it.language == selectedLanguage }
+                val data = fetchLearningEntries(client)
+                entry = data.firstOrNull {
+                    it.courseId == courseId && it.language == selectedLanguage
+                }
+            } catch (_: Exception) {
+                entry = null
             }
         }
     }
 
     if (entry == null) {
+        // Show loading centered
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Loading prevention tips...")
+            CircularProgressIndicator()
         }
     } else {
-        Column(Modifier.padding(16.dp)) {
-            // Dynamic heading based on selected language
+        // Show content from top
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             Text(
                 text = when (selectedLanguage) {
                     "en" -> "Prevention Tips for ${entry!!.title}"
                     "hi" -> "${entry!!.title} के लिए रोकथाम युक्तियाँ"
                     "pn" -> "${entry!!.title} ਲਈ ਰੋਕਥਾਮ ਦੇ ਟਿੱਪਸ"
-                    "As" -> "${entry!!.title} ৰ বাবে ৰোধ ব্যৱস্থা"
-                    else -> "Prevention Tips"
+                    "as" -> "${entry!!.title} ৰ বাবে ৰোধ ব্যৱস্থা"
+                    else -> "Prevention Tips for ${entry!!.title}"
                 },
                 style = MaterialTheme.typography.titleLarge
             )
-
             Spacer(Modifier.height(8.dp))
-
-            // Display localized prevention content
-            when (selectedLanguage) {
-                "en", "hi", "pn", "As" -> {
-                    Text(text = entry!!.prevention, style = MaterialTheme.typography.bodyLarge)
-                }
-                else -> {
-                    Text("No prevention content available for the selected language.")
-                }
-            }
+            Text(
+                text = entry!!.prevention,
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     }
 }
