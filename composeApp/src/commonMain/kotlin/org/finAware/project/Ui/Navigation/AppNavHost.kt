@@ -3,22 +3,34 @@ package org.finAware.project.Ui.Navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import io.ktor.client.HttpClient
+import org.finAware.project.Ui.CourseDetailScreen
 import org.finAware.project.Ui.FraudSimulatorScreen
 import org.finAware.project.Ui.FraudTipsScreen
 import org.finAware.project.Ui.FraudTypeSelectionScreen
 import org.finAware.project.Ui.ProfileScreen
 import org.finAware.project.Ui.ResultEvaluatorScreen
-import org.finAware.project.api.LearningViewModel
+import org.finAware.project.api.fetchLearningEntries
 import org.finAware.project.model.FraudType
+import org.finAware.project.model.LearningEntry
 import org.finAware.project.ui.DashboardScreen
-import org.finaware.project.ui.screens.LearningCenterScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavHost(navController: NavHostController) {
+fun AppNavHost(navController: NavHostController,
+               client: HttpClient,
+               selectedLanguage: String
+) {
     NavHost(navController = navController, startDestination = "dashboard") {
 
         // Dashboard screen
@@ -27,9 +39,32 @@ fun AppNavHost(navController: NavHostController) {
         }
 
         // Learning screen
-        composable("learning") {
-            LearningCenterScreen(navController)
+        composable(
+            "learning/{entryId}/{language}",
+            arguments = listOf(
+                navArgument("entryId") { type = NavType.StringType },
+                navArgument("language") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val entryId = backStackEntry.arguments?.getString("entryId") ?: ""
+            val language = backStackEntry.arguments?.getString("language") ?: selectedLanguage
+
+            var entry by remember { mutableStateOf<LearningEntry?>(null) }
+
+            LaunchedEffect(Unit) {
+                val allEntries = fetchLearningEntries(client)
+                entry = allEntries.find { it.courseId == entryId }
+            }
+
+            entry?.let {
+                CourseDetailScreen(
+                    navController = navController,
+                    entry = it,
+                    selectedLanguage = language
+                )
+            }
         }
+
 
         // Profile screen
         composable("profile") {
@@ -42,8 +77,9 @@ fun AppNavHost(navController: NavHostController) {
         // Nested learning graph
         learningGraph(
             navController = navController,
-            learningViewModel = LearningViewModel()
-        )
+            client = client,
+            selectedLanguage
+            )
         // Fraud Simulation screen with dynamic type
         composable("simulate/{type}") { backStack ->
             val typeArg = backStack.arguments?.getString("type") ?: "UPI_SCAM"

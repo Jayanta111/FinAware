@@ -13,21 +13,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import io.ktor.client.HttpClient
 import org.finAware.project.FinAwareHomeScreen
 import org.finAware.project.Ui.FraudSimulatorScreen
 import org.finAware.project.Ui.FraudTipsScreen
 import org.finAware.project.Ui.FraudTypeSelectionScreen
 import org.finAware.project.Ui.ProfileScreen
-import org.finAware.project.api.LearningViewModel
 import org.finAware.project.authentication.AuthServiceImpl
 import org.finAware.project.authentication.AuthViewModel
 import org.finAware.project.authentication.LoginScreen
 import org.finAware.project.authentication.SignUpScreen
 import org.finAware.project.model.FraudType
-import org.finAware.project.model.LearningEntry
 import org.finAware.project.ui.DashboardScreen
-import org.finaware.project.ui.screens.LearningCenterScreen
-import org.finaware.project.ui.screens.LearningCenterScreen
+import org.finAware.project.ui.LearningCenterScreen
 
 
 sealed class Screen(val route: String) {
@@ -35,8 +33,8 @@ sealed class Screen(val route: String) {
     data object Login : Screen("login")
     data object SignUp : Screen("signup")
     data object Dashboard : Screen("DashboardScreen")
-    data object SimulatorSelection : Screen("Simulator") // FraudTypeSelectionScreen
-    data object Simulator : Screen("simulate/{type}") // FraudSimulatorScreen
+    data object SimulatorSelection : Screen("Simulator")
+    data object Simulator : Screen("simulate/{type}")
     data object Learning : Screen("learning")
     data object Profile : Screen("ProfileScreen")
     data object Tips : Screen("tips")
@@ -46,7 +44,9 @@ sealed class Screen(val route: String) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigation(
-    onGoogleSignIn: () -> Unit
+    onGoogleSignIn: () -> Unit,
+    client: HttpClient,
+    selectedLanguage: String
 ) {
     val navController = rememberNavController()
     val context = LocalContext.current
@@ -125,7 +125,11 @@ fun AppNavigation(
         }
 
         composable(Screen.Learning.route) {
-            LearningCenterScreen(navController)
+            LearningCenterScreen(
+                navController = navController,
+                client = client,
+                selectedLanguage = selectedLanguage
+            )
         }
 
         composable(Screen.SimulatorSelection.route) {
@@ -140,9 +144,7 @@ fun AppNavigation(
             ProfileScreen(navController)
         }
 
-        learningGraph(
-            navController = navController,
-            learningViewModel = LearningViewModel()
-        )    }
+        learningGraph(navController, client, selectedLanguage)
+    }
 }
 

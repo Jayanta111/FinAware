@@ -5,7 +5,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -14,7 +13,8 @@ import org.finAware.project.model.LearningEntry
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseDetailScreen(navController: NavController, entry: LearningEntry) {
+fun CourseDetailScreen(navController: NavController,    entry: LearningEntry,
+    selectedLanguage: String) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -42,7 +42,7 @@ fun CourseDetailScreen(navController: NavController, entry: LearningEntry) {
             Spacer(Modifier.height(16.dp))
             Button(
                 onClick = {
-                    navController.navigate("courseContent/${entry.courseId}")
+                    navController.navigate("courseContent/${entry.courseId}/${selectedLanguage}")
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
