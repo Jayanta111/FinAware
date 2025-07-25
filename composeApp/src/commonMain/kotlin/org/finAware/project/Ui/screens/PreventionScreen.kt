@@ -57,7 +57,7 @@ fun PreventionScreen(
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = entry!!.prevention,
+                text = entry!!.prevention.toString(),
                 style = MaterialTheme.typography.bodyLarge
             )
         }

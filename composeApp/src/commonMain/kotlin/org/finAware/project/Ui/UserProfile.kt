@@ -22,7 +22,7 @@ fun ProfileScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    var fullName by remember { mutableStateOf("Loading...") }
+    var displayName by remember { mutableStateOf("Loading...") }
     val userEmail = user?.email ?: "No Email"
     val userXP = remember { 120 }
 
@@ -36,7 +36,7 @@ fun ProfileScreen(navController: NavController) {
                     fullName = fullName
                 }
                 .addOnFailureListener {
-                    fullName = "Error loading name"
+                    displayName = "Error loading name"
                 }
         }
     }
@@ -63,7 +63,7 @@ fun ProfileScreen(navController: NavController) {
 
             Text(text = "Welcome", fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(
-                text = fullName,
+                text = displayName,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(bottom = 4.dp)

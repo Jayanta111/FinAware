@@ -60,7 +60,7 @@ fun CourseCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = entry.intro,
+                    text = entry.intro.toString(),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray,
                     maxLines = 2,
@@ -72,7 +72,7 @@ fun CourseCard(
                 // Language badge
                 AssistChip(
                     onClick = {},
-                    label = { Text(entry.language) },
+                    label = { Text(entry.language.toString()) },
                     shape = RoundedCornerShape(50),
                     colors = AssistChipDefaults.assistChipColors(
                         containerColor = Color(0xFFEFEFEF),

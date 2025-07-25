@@ -19,7 +19,7 @@ fun FraudSimulatorScreen(navController: NavController, fraudType: FraudType?) {
 
     Scaffold(
         bottomBar = {
-            BottomNavBar(navController = navController, currentRoute = "learning")
+            BottomNavBar(navController = navController, currentRoute = "Simulator")
         }
     ) { padding ->
         Box(modifier = Modifier

@@ -105,7 +105,7 @@ fun CourseDetailScreen(
                     )
 
                     Text(
-                        text = entry.intro,
+                        text = entry.intro.toString(),
                         style = MaterialTheme.typography.bodyMedium,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,

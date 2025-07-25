@@ -76,7 +76,7 @@ fun IntroScreen(
                 Spacer(Modifier.height(8.dp))
 
                 Text(
-                    text = entry!!.intro,
+                    text = entry!!.intro.toString(),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }

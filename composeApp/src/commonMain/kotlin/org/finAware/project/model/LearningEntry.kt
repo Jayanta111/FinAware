@@ -1,19 +1,19 @@
 package org.finAware.project.model
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerialName
 
 @Serializable
 data class LearningEntry(
     @SerialName("_id")
-    val ignoredId: String? = null,
+    val id: String? = null,
 
-    val courseId: String = "",
+    val courseId: String? = null,
     val title: String = "",
-    val imageUrl: String? = null,
     val intro: String = "",
     val example: String = "",
     val prevention: String = "",
-    val quiz: String = "",
-    val language: String = ""
+    val language: String = "",
+    val imageUrl: String? = null,
+    val imageAvailable: Boolean = false
 )

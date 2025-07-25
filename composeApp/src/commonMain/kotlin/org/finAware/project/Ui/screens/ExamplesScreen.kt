@@ -57,7 +57,7 @@ fun ExamplesScreen(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = entry!!.example,
+                text = entry!!.example.toString(),
                 style = MaterialTheme.typography.bodyLarge
             )
         }

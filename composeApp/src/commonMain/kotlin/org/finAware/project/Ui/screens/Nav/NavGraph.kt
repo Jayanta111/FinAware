@@ -22,7 +22,9 @@ import org.finAware.project.ui.LearningCenterScreen
 fun NavGraphBuilder.learningGraph(
     navController: NavHostController,
     client: HttpClient,
-    selectedLanguage: String
+    selectedLanguage: String,
+    displayName: String,
+    email: String
 ) {
     navigation(
         startDestination = "learningHome",
@@ -87,9 +89,11 @@ fun NavGraphBuilder.learningGraph(
             val selectedLanguage = backStackEntry.arguments?.getString("language") ?: "English"
 
             CourseContentNavScreen(
+                navController = navController,
                 courseId = courseId,
                 selectedLanguage = selectedLanguage,
-                navController = navController,
+                displayName = displayName,
+                email = email,
                 client = client
             )
         }

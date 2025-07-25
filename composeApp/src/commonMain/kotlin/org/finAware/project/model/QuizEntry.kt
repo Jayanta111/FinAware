@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class QuizQuestion(
+data class QuizEntry(
     val question: String,
     val options: List<String>,
     val correctAnswerIndex: Int
@@ -14,15 +14,18 @@ data class QuizQuestion(
 data class QuizPayload(
     val courseId: String,
     val title: String,
-    val questions: List<QuizQuestion>
+    val quiz: List<QuizEntry>
 )
+
 
 @Serializable
 data class QuizResponse(
-    @SerialName("_id")
-    val id: String? = null,
+    val userUid: String,
+    val email: String,
     val courseId: String,
-    val title: String,
-    val questions: List<QuizQuestion>,
-    val createdAt: String? = null
+    val score: Int,
+    val xpEarned: Int,
+    val totalQuestions: Int,
+    val userAnswers: List<Int?>,
+    val selectedLanguage: String
 )

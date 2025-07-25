@@ -46,7 +46,9 @@ sealed class Screen(val route: String) {
 fun AppNavigation(
     onGoogleSignIn: () -> Unit,
     client: HttpClient,
-    selectedLanguage: String
+    selectedLanguage: String,
+    fullName: String,
+    email: String
 ) {
     val navController = rememberNavController()
     val context = LocalContext.current
@@ -144,7 +146,12 @@ fun AppNavigation(
             ProfileScreen(navController)
         }
 
-        learningGraph(navController, client, selectedLanguage)
-    }
+        learningGraph(
+            navController = navController,
+            client = client,
+            selectedLanguage = selectedLanguage,
+            displayName = fullName,
+            email = email
+        )    }
 }
 

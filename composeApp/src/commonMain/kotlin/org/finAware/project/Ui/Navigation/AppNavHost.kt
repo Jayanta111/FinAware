@@ -29,7 +29,9 @@ import org.finAware.project.ui.DashboardScreen
 @Composable
 fun AppNavHost(navController: NavHostController,
                client: HttpClient,
-               selectedLanguage: String
+               selectedLanguage: String,
+               displayName: String,
+               email: String
 ) {
     NavHost(navController = navController, startDestination = "dashboard") {
 
@@ -78,8 +80,10 @@ fun AppNavHost(navController: NavHostController,
         learningGraph(
             navController = navController,
             client = client,
-            selectedLanguage
-            )
+            selectedLanguage = selectedLanguage,
+            displayName = displayName,
+            email = email
+        )
         // Fraud Simulation screen with dynamic type
         composable("simulate/{type}") { backStack ->
             val typeArg = backStack.arguments?.getString("type") ?: "UPI_SCAM"

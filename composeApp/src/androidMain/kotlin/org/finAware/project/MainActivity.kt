@@ -54,13 +54,19 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            // Language selection (you can later use shared preferences)
             val selectedLanguage by remember { mutableStateOf("en") }
+
+            // ✅ Get Firebase user info
+            val firebaseUser = firebaseAuth.currentUser
+            val fullName = firebaseUser?.displayName ?: ""
+            val email = firebaseUser?.email ?: ""
 
             FinAwareTheme {
                 AppNavigation(
                     client = client,
                     selectedLanguage = selectedLanguage,
+                    fullName = fullName,
+                    email = email,
                     onGoogleSignIn = {
                         val signInIntent = googleSignInClient.signInIntent
                         startActivityForResult(signInIntent, RC_SIGN_IN)
@@ -68,6 +74,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+
     }
 
     // ✅ Google Sign-In result

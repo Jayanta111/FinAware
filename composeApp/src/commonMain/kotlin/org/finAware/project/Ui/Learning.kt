@@ -32,14 +32,12 @@ fun LearningCenterScreen(
 
     val contentList = remember { mutableStateListOf<LearningEntry>() }
     var isLoading by remember { mutableStateOf(true) }
-    var loadError by remember { mutableStateOf(false) }
-
-    // 🔄 Fetch content from backend only once
+    var loadError by remember { mutableStateOf(false) } // 🔄 Fetch content from backend only once
     LaunchedEffect(Unit) {
         try {
-            val fetched = fetchLearningEntries(client)
+            val converted = fetchLearningEntries(client)
             contentList.clear()
-            contentList.addAll(fetched)
+            contentList.addAll(converted)
             loadError = false
         } catch (e: Exception) {
             println("❌ Error fetching content: ${e.message}")
@@ -52,7 +50,7 @@ fun LearningCenterScreen(
     val filteredEntries by remember(contentList, language, searchQuery) {
         derivedStateOf {
             contentList.filter {
-                it.language.contains(language, ignoreCase = true) &&
+                (it.language ?: "").contains(language, ignoreCase = true) &&
                         it.title.contains(searchQuery, ignoreCase = true)
             }
         }
@@ -80,13 +78,26 @@ fun LearningCenterScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    listOf("English", "हिन्दी", "ਪੰਜਾਬੀ", "অসমীয়া").forEach { lang ->
-                        FilterChip(
-                            selected = language == lang,
-                            onClick = { language = lang },
-                            label = { Text(lang) }
-                        )
+                    val languages = listOf(
+                        "English" to "en",
+                        "हिन्दी" to "hi",
+                        "ਪੰਜਾਬੀ" to "pa",
+                        "অসমীয়া" to "as"
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        languages.forEach { (label, code) ->
+                            FilterChip(
+                                selected = language == code,
+                                onClick = { language = code },
+                                label = { Text(label) }
+                            )
+                        }
                     }
+
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
